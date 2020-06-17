@@ -11,7 +11,7 @@ node ('Ubuntu-App-Agent') {
     stage('Build-and-Tag') {
     /* This builds the actual image; synonymous to
          * docker build on the command line */
-        app = docker.build("ptomar25/snakegame:AWS")
+        app = docker.build("ptomar25/snakegame")
     }
     
     stage('Post-to-DockerHub') {
