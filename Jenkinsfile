@@ -4,9 +4,10 @@ node ('Ubuntu-App-Agent') {
        // Let's make sure we have the repository cloned to our workspace
         checkout scm
     }  
-    /* stage('SAST'){
+    
+    stage('SAST'){
         build 'SECURITY-SAST-SNYK'
-    } */
+    }
 
     stage('Build-and-Tag') {
     // This builds the actual image; synonymous to docker build on the command line
@@ -19,16 +20,16 @@ node ('Ubuntu-App-Agent') {
         			}
     }
     
-    /* stage('Security-Image-Scanner') {
-        build 'SECURITY-IMAGE-SCANNER-AQUAMICROSCANNER'
-    } */
+    stage('Security-Image-Scanner') {
+        build 'Security-Image-Aqua'
+    }
     
     stage('Pull-Image-Server') {
          sh "docker-compose down"
          sh "docker-compose up -d"
     }
     
-    /* stage('DAST') {
-        build 'SECURITY-DAST-OWASP_ZAP'
-    } */
+    stage('DAST') {
+        build 'Security-DAST-OWASP_ZAP'
+    }
 }
