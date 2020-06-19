@@ -5,11 +5,11 @@ node ('Ubuntu-App-Agent') {
         checkout scm
     }  
     
-    stage('SAST-1'){
+    stage('SCA'){
         build 'Security-SAST-Snyk'
     }
     
-    stage('SAST-2'){
+    stage('SAST'){
         build 'Security-SAST-SonarQube'
     }
 
@@ -21,7 +21,7 @@ node ('Ubuntu-App-Agent') {
     stage('Post-to-DockerHub') {
         docker.withRegistry('https://registry.hub.docker.com', 'DockerHub') {
             app.push("Jenkins")
-        			}
+        	}
     }
     
     stage('Image-Scanner-1') {
