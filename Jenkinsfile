@@ -6,7 +6,7 @@ node ('Ubuntu-App-Agent') {
     }  
     
     stage('SCA'){
-        build 'Security-SAST-Snyk'
+        build 'Security-SCA-Snyk'
     }
     
     stage('SAST'){
