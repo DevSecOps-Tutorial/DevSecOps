@@ -5,7 +5,7 @@ node ('Ubuntu-App-Agent') {
         checkout scm
     }  
     
-    stage('SCA'){
+    stage('SCA Tool'){
         build 'Security-SAST-Snyk'
     }
     
