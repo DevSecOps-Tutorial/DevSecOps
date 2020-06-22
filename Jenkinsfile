@@ -5,23 +5,11 @@ node ('Ubuntu-App-Agent') {
         checkout scm
     }  
     
-    stage('SCA'){
+    stage('SCA - Snyk'){
         build 'Security-SCA-Snyk'
     }
     
-    stage("docker_scan"){
-      sh '''
-        docker run -d --name db arminc/clair-db
-        sleep 15 # wait for db to come up
-        docker run -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan
-        sleep 1
-        DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
-        wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
-        ./clair-scanner --ip="$DOCKER_GATEWAY" myapp:latest || exit 0
-      '''
-    }
-    
-    stage('SAST'){
+    stage('SAST - SonarQube'){
         build 'Security-SAST-SonarQube'
     }
 
@@ -36,11 +24,23 @@ node ('Ubuntu-App-Agent') {
         	}
     }
     
-    stage('Image-Scanner-1') {
+    stage("SCA - Clair"){
+      sh '''
+        docker run -d --name db arminc/clair-db
+        sleep 15 # wait for db to come up
+        docker run -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan
+        sleep 1
+        DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
+        wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
+        ./clair-scanner --ip="$DOCKER_GATEWAY" ptomar25/snakegame:Jenkins || exit 0
+      '''
+    }
+    
+    stage('Image-Scanner - Aqua') {
         build 'Security-Image-Aqua'
     }
     
-    stage('Image-Scanner-2') {
+    stage('Image-Scanner - Anchore') {
         build 'Security-Image-Anchore'
     }
     
@@ -49,11 +49,11 @@ node ('Ubuntu-App-Agent') {
          sh "docker-compose up -d"
     }
     
-    stage('DAST-1') {
+    stage('DAST - OWASP_ZAP') {
         build 'Security-DAST-OWASP_ZAP'
     }
     
-    stage('DAST-2') {
+    stage('DAST - Arachni') {
         build 'Security-DAST-Arachni'
     }
 }
