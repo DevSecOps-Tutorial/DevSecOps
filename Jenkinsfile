@@ -24,7 +24,7 @@ node ('Ubuntu-App-Agent') {
         	}
     }
     
-    stage("SCA - Clair"){
+    /* stage("SCA - Clair"){
       sh '''
         docker run -d --name db arminc/clair-db
         sleep 15 # wait for db to come up
@@ -34,7 +34,7 @@ node ('Ubuntu-App-Agent') {
         wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
         ./clair-scanner --ip="$DOCKER_GATEWAY" ptomar25/snakegame:Jenkins || exit 0
       '''
-    }
+    } */
     
     stage('Image-Scanner - Aqua') {
         build 'Security-Image-Aqua'
